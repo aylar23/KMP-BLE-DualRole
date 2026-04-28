@@ -24,6 +24,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(projects.shared.protocol)
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
