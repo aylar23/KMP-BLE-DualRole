@@ -1,0 +1,50 @@
+name: Main Branch
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    name: Assemble Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Assemble debug APK
+        run: ./gradlew :composeApp:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: composeApp/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+  build-ios:
+    name: Build iOS Framework
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Build iOS release framework
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
+
+  build-desktop:
+    name: Build Desktop App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Package desktop distributable
+        run: ./gradlew :composeApp:packageDistributionForCurrentOS

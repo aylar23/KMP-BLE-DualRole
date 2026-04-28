@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS Transfer (
+    id TEXT NOT NULL PRIMARY KEY,
+    peer_id TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    file_size_bytes INTEGER NOT NULL,
+    transferred_bytes INTEGER NOT NULL DEFAULT 0,
+    direction TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    started_at_ms INTEGER NOT NULL,
+    completed_at_ms INTEGER
+);
+
+selectAll:
+SELECT * FROM Transfer ORDER BY started_at_ms DESC;
+
+selectByPeer:
+SELECT * FROM Transfer WHERE peer_id = ? ORDER BY started_at_ms DESC;
+
+selectById:
+SELECT * FROM Transfer WHERE id = ?;
+
+insert:
+INSERT INTO Transfer (id, peer_id, file_name, file_size_bytes, transferred_bytes, direction, status, started_at_ms)
+VALUES (?, ?, ?, ?, 0, ?, 'pending', ?);
+
+updateProgress:
+UPDATE Transfer SET transferred_bytes = ?, status = ? WHERE id = ?;
+
+complete:
+UPDATE Transfer
+SET transferred_bytes = file_size_bytes, status = 'completed', completed_at_ms = ?
+WHERE id = ?;
+
+fail:
+UPDATE Transfer SET status = 'failed' WHERE id = ?;

@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS Message (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    peer_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    is_outgoing INTEGER NOT NULL DEFAULT 0,
+    timestamp_ms INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'sent'
+);
+
+selectAll:
+SELECT * FROM Message ORDER BY timestamp_ms DESC;
+
+selectByPeer:
+SELECT * FROM Message WHERE peer_id = ? ORDER BY timestamp_ms ASC;
+
+insert:
+INSERT INTO Message (peer_id, content, is_outgoing, timestamp_ms, status)
+VALUES (?, ?, ?, ?, ?);
+
+updateStatus:
+UPDATE Message SET status = ? WHERE id = ?;
+
+deleteByPeer:
+DELETE FROM Message WHERE peer_id = ?;

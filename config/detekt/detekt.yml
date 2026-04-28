@@ -1,0 +1,31 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  LongMethod:
+    threshold: 60
+  LargeClass:
+    threshold: 600
+  TooManyFunctions:
+    thresholdInFiles: 20
+    thresholdInClasses: 15
+
+style:
+  MaxLineLength:
+    maxLineLength: 120
+  FunctionNaming:
+    active: true
+  MagicNumber:
+    active: false
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false

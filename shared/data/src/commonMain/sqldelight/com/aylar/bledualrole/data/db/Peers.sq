@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS Peer (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    is_bonded INTEGER NOT NULL DEFAULT 0,
+    last_seen_ms INTEGER NOT NULL,
+    protocol_version INTEGER NOT NULL DEFAULT 1
+);
+
+selectAll:
+SELECT * FROM Peer;
+
+selectById:
+SELECT * FROM Peer WHERE id = ?;
+
+upsert:
+INSERT OR REPLACE INTO Peer (id, name, is_bonded, last_seen_ms, protocol_version)
+VALUES (?, ?, ?, ?, ?);
+
+updateBondState:
+UPDATE Peer SET is_bonded = ? WHERE id = ?;
+
+delete:
+DELETE FROM Peer WHERE id = ?;

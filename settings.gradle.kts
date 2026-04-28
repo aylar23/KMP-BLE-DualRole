@@ -2,6 +2,7 @@ rootProject.name = "KMPBLEDualRole"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -33,3 +34,8 @@ plugins {
 }
 
 include(":composeApp")
+include(":shared:protocol")
+include(":shared:ble-core")
+include(":shared:domain")
+include(":shared:data")
+include(":shared:presentation")
