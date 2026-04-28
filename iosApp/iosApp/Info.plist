@@ -4,5 +4,16 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
+	<!-- BLE usage description (required for App Store review) -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>BleDuoRole uses Bluetooth to discover nearby peers and exchange messages without internet.</string>
+
+	<!-- Background modes for sustained BLE scanning and advertising -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+	</array>
 </dict>
 </plist>
