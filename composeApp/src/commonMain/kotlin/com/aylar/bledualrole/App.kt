@@ -1,49 +1,53 @@
 package com.aylar.bledualrole
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.aylar.bledualrole.ui.Screen
+import com.aylar.bledualrole.ui.screen.ChatScreen
+import com.aylar.bledualrole.ui.screen.DebugScreen
+import com.aylar.bledualrole.ui.screen.FileTransferScreen
+import com.aylar.bledualrole.ui.screen.PeerListScreen
 
-import kmpbledualrole.composeapp.generated.resources.Res
-import kmpbledualrole.composeapp.generated.resources.compose_multiplatform
-
+/**
+ * Root composable. Screens are navigated via a simple state variable — no external
+ * navigation library needed at this stage.
+ *
+ * [viewModelProvider] is the platform-specific DI entry point; each platform creates
+ * ViewModels backed by the real BLE stack and SQLDelight repositories.
+ */
 @Composable
-@Preview
-fun App() {
+fun App(viewModelProvider: AppViewModelProvider) {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+        var screen by remember { mutableStateOf<Screen>(Screen.PeerList) }
+
+        when (val s = screen) {
+            Screen.PeerList -> PeerListScreen(
+                vm = viewModelProvider.peerListViewModel(),
+                onOpenChat = { id, name -> screen = Screen.Chat(id, name) },
+                onOpenDebug = { screen = Screen.Debug },
+            )
+            is Screen.Chat -> ChatScreen(
+                peerName = s.peerName,
+                vm = viewModelProvider.chatViewModel(s.peerId),
+                onBack = { screen = Screen.PeerList },
+                onOpenFileTransfer = { screen = Screen.FileTransfer(s.peerId) },
+            )
+            is Screen.FileTransfer -> FileTransferScreen(
+                vm = viewModelProvider.fileTransferViewModel(s.peerId),
+                onBack = { screen = Screen.PeerList },
+                onPickFile = { callback ->
+                    // Platform-specific file picker is injected via viewModelProvider
+                    viewModelProvider.pickFile(callback)
+                },
+            )
+            Screen.Debug -> DebugScreen(
+                vm = viewModelProvider.debugViewModel(),
+                onBack = { screen = Screen.PeerList },
+            )
         }
     }
 }

@@ -25,6 +25,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(projects.shared.domain)
         }
+        iosMain.dependencies {
+            // NSDate for currentTimeMs expect/actual
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

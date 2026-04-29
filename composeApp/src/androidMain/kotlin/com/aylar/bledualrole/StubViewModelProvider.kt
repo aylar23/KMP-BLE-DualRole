@@ -1,7 +1,7 @@
 package com.aylar.bledualrole
 
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aylar.bledualrole.domain.model.Message
 import com.aylar.bledualrole.domain.model.MessageStatus
 import com.aylar.bledualrole.domain.model.Peer
@@ -23,16 +23,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "BLE Dual Role — Desktop Sniffer",
-    ) {
-        App(DesktopStubProvider())
-    }
-}
-
-private class DesktopStubProvider : AppViewModelProvider {
+/**
+ * Stub provider used while the real BLE stack integration is in progress.
+ * Replace with a real implementation backed by AndroidBleCentral + repositories.
+ */
+class StubViewModelProvider : AppViewModelProvider {
 
     private val stubSession = object : BleSessionController {
         override val isScanning = MutableStateFlow(false)
@@ -50,20 +45,27 @@ private class DesktopStubProvider : AppViewModelProvider {
         override fun rssi(peerId: String): StateFlow<Int> = MutableStateFlow(-70)
     }
 
-    private val noPeers = object : PeerRepository {
-        override fun observeAll() = flowOf(emptyList<Peer>())
+    private val stubPeerRepo = object : PeerRepository {
+        override fun observeAll() = flowOf(
+            listOf(Peer("AA:BB:CC:DD:EE:FF", "Test Device", isBonded = false, lastSeenMs = 0L)),
+        )
         override suspend fun upsert(peer: Peer) {}
         override suspend fun updateBondState(peerId: String, isBonded: Boolean) {}
         override suspend fun delete(peerId: String) {}
     }
 
-    private val noMessages = object : MessageRepository {
-        override fun observeByPeer(peerId: String) = flowOf(emptyList<Message>())
+    private val stubMessageRepo = object : MessageRepository {
+        override fun observeByPeer(peerId: String) = flowOf(
+            listOf(
+                Message(1, peerId, "Hello!", isOutgoing = false, timestampMs = 0L, status = MessageStatus.DELIVERED),
+                Message(2, peerId, "Hi there", isOutgoing = true, timestampMs = 1L),
+            ),
+        )
         override suspend fun insert(message: Message): Long = 0L
         override suspend fun updateStatus(id: Long, status: MessageStatus) {}
     }
 
-    private val noTransfers = object : TransferRepository {
+    private val stubTransferRepo = object : TransferRepository {
         override fun observeByPeer(peerId: String): Flow<List<Transfer>> = flowOf(emptyList())
         override suspend fun insert(transfer: Transfer) {}
         override suspend fun updateProgress(id: String, transferredBytes: Long, status: com.aylar.bledualrole.domain.model.TransferStatus) {}
@@ -71,9 +73,16 @@ private class DesktopStubProvider : AppViewModelProvider {
         override suspend fun fail(id: String) {}
     }
 
-    override fun peerListViewModel() = PeerListViewModel(noPeers, stubSession)
-    override fun chatViewModel(peerId: String) = ChatViewModel(peerId, noMessages, stubSession)
-    override fun fileTransferViewModel(peerId: String) = FileTransferViewModel(peerId, noTransfers, stubSession)
+    override fun peerListViewModel() = PeerListViewModel(stubPeerRepo, stubSession)
+
+    override fun chatViewModel(peerId: String) = ChatViewModel(peerId, stubMessageRepo, stubSession)
+
+    override fun fileTransferViewModel(peerId: String) =
+        FileTransferViewModel(peerId, stubTransferRepo, stubSession)
+
     override fun debugViewModel() = DebugViewModel(stubSession)
-    override fun pickFile(onPicked: (String, ByteArray) -> Unit) {}
+
+    override fun pickFile(onPicked: (fileName: String, data: ByteArray) -> Unit) {
+        // Real implementation would use ActivityResultContracts.GetContent()
+    }
 }
