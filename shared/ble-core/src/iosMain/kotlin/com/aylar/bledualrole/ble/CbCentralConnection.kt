@@ -123,6 +123,12 @@ internal class CbCentralConnection(
         peripheral.writeValue(bytes.toNSData(), forCharacteristic = char, type = CBCharacteristicWriteWithResponse)
     }
 
+    @OptIn(ExperimentalForeignApi::class)
+    override suspend fun sendNoAck(bytes: ByteArray) {
+        val char = txChar ?: throw BleError.OperationFailed("Not connected")
+        peripheral.writeValue(bytes.toNSData(), forCharacteristic = char, type = CBCharacteristicWriteWithoutResponse)
+    }
+
     override suspend fun requestMtu(size: Int): Int = _mtu.value
 
     override suspend fun bond(): BondResult = BondResult.AlreadyBonded

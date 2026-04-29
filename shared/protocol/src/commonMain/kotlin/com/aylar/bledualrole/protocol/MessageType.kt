@@ -9,6 +9,12 @@ enum class MessageType(val id: Byte) {
     FILE_OFFER(0x20),
     FILE_CHUNK(0x21),
     FILE_COMPLETE(0x22),
+    FILE_ACK(0x23),
+    FILE_ABORT(0x24),
+    FILE_PAUSE(0x25),
+    FILE_RESUME(0x26),
+    PING(0x30),
+    PONG(0x31),
     BYE(0xFF.toByte());
 
     companion object {

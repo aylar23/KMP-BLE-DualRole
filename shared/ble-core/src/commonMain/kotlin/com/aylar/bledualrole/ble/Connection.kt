@@ -10,6 +10,7 @@ interface Connection {
     val incoming: Flow<ByteArray>
 
     suspend fun send(bytes: ByteArray)
+    suspend fun sendNoAck(bytes: ByteArray) = send(bytes)
     suspend fun requestMtu(size: Int): Int
     suspend fun bond(): BondResult
     suspend fun close()

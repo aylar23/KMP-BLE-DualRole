@@ -145,11 +145,22 @@ internal class GattConnection(
 
     @Suppress("DEPRECATION")
     override suspend fun send(bytes: ByteArray) {
+        writeCharacteristic(bytes, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+    }
+
+    @Suppress("DEPRECATION")
+    override suspend fun sendNoAck(bytes: ByteArray) {
+        writeCharacteristic(bytes, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun writeCharacteristic(bytes: ByteArray, writeType: Int) {
         val char = txChar ?: throw BleError.OperationFailed("Not connected")
         val g = gatt ?: throw BleError.OperationFailed("Not connected")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            g.writeCharacteristic(char, bytes, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+            g.writeCharacteristic(char, bytes, writeType)
         } else {
+            char.writeType = writeType
             char.value = bytes
             g.writeCharacteristic(char)
         }
