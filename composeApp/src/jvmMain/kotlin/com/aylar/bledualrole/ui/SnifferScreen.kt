@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,6 +31,7 @@ import com.aylar.bledualrole.domain.session.PacketLogEntry
  * Desktop-only sniffer view: shows live GATT packet log across all active connections.
  * Useful during development — surface all frame bytes in a scrollable log.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SnifferScreen(
     logFlow: kotlinx.coroutines.flow.Flow<PacketLogEntry>,

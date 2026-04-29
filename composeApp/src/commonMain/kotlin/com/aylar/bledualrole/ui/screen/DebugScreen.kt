@@ -1,5 +1,6 @@
 package com.aylar.bledualrole.ui.screen
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.aylar.bledualrole.domain.session.PacketLogEntry
 import com.aylar.bledualrole.presentation.DebugViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DebugScreen(
     vm: DebugViewModel,

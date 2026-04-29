@@ -1,5 +1,6 @@
 package com.aylar.bledualrole.ui.screen
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import com.aylar.bledualrole.domain.session.ConnectedPeerInfo
 import com.aylar.bledualrole.domain.session.PeerConnectionStatus
 import com.aylar.bledualrole.presentation.PeerListViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PeerListScreen(
     vm: PeerListViewModel,

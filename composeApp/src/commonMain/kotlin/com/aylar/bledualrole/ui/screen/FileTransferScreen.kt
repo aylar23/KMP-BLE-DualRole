@@ -1,5 +1,6 @@
 package com.aylar.bledualrole.ui.screen
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,9 +35,11 @@ import com.aylar.bledualrole.domain.model.TransferDirection
 import com.aylar.bledualrole.domain.model.TransferStatus
 import com.aylar.bledualrole.presentation.FileTransferViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FileTransferScreen(
-    vm: FileTransferViewModel,
+    vm: FileTransferView
+    Model,
     onBack: () -> Unit,
     onPickFile: (onPicked: (fileName: String, data: ByteArray) -> Unit) -> Unit,
 ) {
@@ -130,7 +133,7 @@ private fun TransferRow(transfer: Transfer) {
 }
 
 private fun formatBytes(bytes: Long): String = when {
-    bytes >= 1_048_576 -> "%.1f MB".format(bytes / 1_048_576.0)
-    bytes >= 1_024 -> "%.1f KB".format(bytes / 1_024.0)
+    bytes >= 1_048_576 -> "${bytes / 1_048_576}.${(bytes % 1_048_576) * 10 / 1_048_576} MB"
+    bytes >= 1_024 -> "${bytes / 1_024}.${(bytes % 1_024) * 10 / 1_024} KB"
     else -> "$bytes B"
 }
