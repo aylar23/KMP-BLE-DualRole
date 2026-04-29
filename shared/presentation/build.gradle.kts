@@ -18,15 +18,13 @@ kotlin {
     }
     iosArm64()
     iosSimulatorArm64()
+    jvm()
 
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(projects.shared.domain)
-        }
-        iosMain.dependencies {
-            // NSDate for currentTimeMs expect/actual
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

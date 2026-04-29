@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aylar.bledualrole.domain.model.Transfer
 import com.aylar.bledualrole.domain.repository.TransferRepository
 import com.aylar.bledualrole.domain.session.BleSessionController
+import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,10 +40,5 @@ class FileTransferViewModel(
 
     fun clearError() { _sendError.value = null }
 
-    private fun generateTransferId(): String {
-        // Simple timestamp-based ID; a real implementation would use UUID
-        return "tx-${currentTimeMs()}"
-    }
+    private fun generateTransferId(): String = "tx-${Random.nextLong().toULong()}"
 }
-
-expect fun currentTimeMs(): Long
